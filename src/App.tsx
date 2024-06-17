@@ -14,7 +14,7 @@ const App: React.FC = () => {
           <div className="lg:w-2/3 lg:pr-4 mb-4 lg:mb-0">
             <StockList onSelectStock={setSelectedStock} />
           </div>
-          <div className="block sm:hidden lg:w-1/3 lg:pl-4">
+          <div className="hidden md:block lg:w-1/3 lg:pl-4">
             <StockDetails symbol={selectedStock} />
           </div>
         </div>
