@@ -68,8 +68,8 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
   const getFilteredStocks = useCallback(() => {
     return stocks.filter((stock) => {
       const matchesName = stock.description.toLowerCase().includes(filter.name.toLowerCase());
-      const matchesCategory = filter.category === 'All' || stock.category === filter.category;
-      return matchesName && matchesCategory;
+      // const matchesCategory = filter.category === 'All' || stock.category === filter.category;
+      return matchesName
     });
   }, [stocks, filter]);
 
