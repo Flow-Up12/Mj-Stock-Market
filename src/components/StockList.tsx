@@ -3,6 +3,7 @@ import { Stock } from '../types/stockTypes';
 import { getAllStocks, getStockData } from '../services/stockService';
 import Pagination from './Pagination';
 import StockFilter from './StockFilter';
+import StockDetails from './StockDetails';
 
 interface StockListProps {
   onSelectStock: (symbol: string) => void;
@@ -16,8 +17,10 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
   const [loading, setLoading] = useState(false);
   const [cache, setCache] = useState<{ [key: string]: Stock }>({});
   const [filter, setFilter] = useState({ name: '', category: 'All' });
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   useEffect(() => {
+    
     const fetchStocks = async () => {
       setLoading(true);
       try {
@@ -28,6 +31,9 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
       }
       setLoading(false);
     };
+
+    setCurrentPage(1);
+    setCurrentStocks(stocks.slice(0, stocksPerPage));
 
     fetchStocks();
   }, []);
@@ -84,7 +90,7 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
       fetchCurrentPageStocks();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, stocksPerPage]);
+  }, [currentPage, stocksPerPage, filter]);
 
   const totalPages = Math.ceil(getFilteredStocks().length / stocksPerPage);
 
@@ -93,42 +99,73 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
     setCurrentPage(1);
   };
 
+  const toggleAccordion = (symbol: string) => {
+    setOpenAccordion(openAccordion === symbol ? null : symbol);
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <div className="bg-gray-800 text-white p-4">
         <h1 className="text-2xl font-bold">Stock List</h1>
       </div>
-      <StockFilter onFilterChange={handleFilterChange} />
+      <div className='p-2'>
+        <StockFilter onFilterChange={handleFilterChange} />
+      </div>
       {loading ? (
         <div className="p-4 text-center">Loading...</div>
       ) : (
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4 border-b text-left">Description</th>
-              <th className="py-2 px-4 border-b text-left">Symbol</th>
-              <th className="py-2 px-4 border-b text-left">Current Price</th>
-              <th className="py-2 px-4 border-b text-left">Previous Close</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentStocks.map((stock, index) => (
-              <tr
-                key={stock.symbol}
-                className={`${
-                  index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
-                } cursor-pointer`}
-                onClick={() => onSelectStock(stock.symbol)}
-              >
-                <td className="py-2 px-4 border-b">{stock.description}</td>
-                <td className="py-2 px-4 border-b">{stock.symbol}</td>
-                {/* <td className="py-2 px-4 border-b">{stock.currentPrice}</td>
-                <td className="py-2 px-4 border-b">{stock.previousClose}</td> */}
-              </tr>
+        <>
+          <div className="block sm:hidden">
+            {currentStocks.map((stock, index: number) => (
+              <div key={stock.symbol + `${index}`} className="border-b">
+                <button
+                  className={`w-full text-left py-2 px-4 ${ index % 2 === 0 ? 'bg-gray-200' : 'bg-white'} focus:outline-none flex justify-between items-center`}
+                  onClick={() => toggleAccordion(stock.symbol)}
+                >
+                  <span>{stock.description} ({stock.symbol})</span>
+                  <span
+                    className={`transform transition-transform ${
+                      openAccordion === stock.symbol ? 'rotate-180' : 'rotate-0'
+                    }`}
+                  >
+                    ▼
+                  </span>
+                </button>
+                {openAccordion === stock.symbol && (
+                  <div className="p-3 pb-2">
+                    <StockDetails symbol={stock.symbol} />
+                  </div>
+                )}
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+          <table className="hidden sm:table min-w-full bg-white">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="py-2 px-4 border-b text-left">Description</th>
+                <th className="py-2 px-4 border-b text-left">Symbol</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentStocks.map((stock, index) => (
+                <tr
+                  key={stock.symbol}
+                  className={`${
+                    index % 2 === 0 ? 'bg-gray-100' : 'bg-white'
+                  } cursor-pointer`}
+                  onClick={() => onSelectStock(stock.symbol)}
+                >
+                  <td className="py-2 px-4 border-b">{stock.description}</td>
+                  <td className="py-2 px-4 border-b">{stock.symbol}</td>
+                  {/* <td className="py-2 px-4 border-b">{stock.currentPrice}</td>
+                  <td className="py-2 px-4 border-b">{stock.previousClose}</td> */}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
+      <div className="p-2" >
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -136,6 +173,7 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
         stocksPerPage={stocksPerPage}
         onStocksPerPageChange={setStocksPerPage}
       />
+      </div>
     </div>
   );
 };

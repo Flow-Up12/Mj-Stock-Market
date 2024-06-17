@@ -11,6 +11,12 @@ const StockDetails: React.FC<StockDetailsProps> = ({ symbol }) => {
   const [stockData, setStockData] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const calculateChange = (current: number, previous: number) => {
+    return (((current - previous) / previous) * 100).toFixed(2) + '%';
+  }
+
+  // green if positive, red if negative and gray if zero
+
   useEffect(() => {
     const fetchStockData = async () => {
       if (symbol) {
@@ -44,7 +50,12 @@ const StockDetails: React.FC<StockDetailsProps> = ({ symbol }) => {
           <p>Low Price of the Day: ${stockData.l}</p>
           <p>Open Price of the Day: ${stockData.o}</p>
           <p>Previous Close Price: ${stockData.pc}</p>
-          <p>Volume: {stockData.v}</p>
+          <p>
+            Change: 
+            <span className={`${stockData.c < stockData.o ? 'text-red-500' : stockData.c > stockData.o ? 'text-green-700' : 'text-gray-500'}`}>
+              {` ${calculateChange(stockData.c, stockData.pc)}`}
+            </span>
+          </p>
         </>
       )}
     </div>

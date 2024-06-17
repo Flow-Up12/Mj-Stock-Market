@@ -9,7 +9,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <AppBar />
-      <main className="container mx-auto py-8 mt-16">
+      <main className="container mx-auto p-0 md:p-12 mt-16">
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-2/3 lg:pr-4 mb-4 lg:mb-0">
             <StockList onSelectStock={setSelectedStock} />
