@@ -107,8 +107,8 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
             <tr className="bg-gray-200">
               <th className="py-2 px-4 border-b text-left">Description</th>
               <th className="py-2 px-4 border-b text-left">Symbol</th>
-              <th className="py-2 px-4 border-b text-left">Current Price</th>
-              <th className="py-2 px-4 border-b text-left">Previous Close</th>
+              {/* <th className="py-2 px-4 border-b text-left">Current Price</th>
+              <th className="py-2 px-4 border-b text-left">Previous Close</th> */}
             </tr>
           </thead>
           <tbody>
