@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Stock, StockData } from "../types/stockTypes";
+import { Stock } from "../types/stockTypes";
 import { getAllStocks, getStockData } from "../services/stockService";
 import Pagination from "./Pagination";
 import StockFilter from "./StockFilter";
@@ -20,6 +20,7 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   useEffect(() => {
+    
     const fetchStocks = async () => {
       setLoading(true);
       try {
@@ -107,7 +108,7 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
     setCurrentPage(1);
   };
 
-  const toggleAccordion = async (symbol: string, description: string) => {
+  const toggleAccordion = async (symbol: string) => {
     if (openAccordion === symbol) {
       setOpenAccordion(null);
       return;
@@ -149,7 +150,7 @@ const StockList: React.FC<StockListProps> = ({ onSelectStock }) => {
                     index % 2 === 0 ? "bg-gray-200" : "bg-white"
                   } focus:outline-none flex justify-between items-center`}
                   onClick={() =>
-                    toggleAccordion(stock.symbol, stock.description)
+                    toggleAccordion(stock.symbol)
                   }
                 >
                   <span>
